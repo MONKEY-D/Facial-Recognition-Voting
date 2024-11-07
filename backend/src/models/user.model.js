@@ -46,7 +46,7 @@ const userSchema = new Schema(
     },
     embeddings: {
       type: [Number], // Array to store the user's face embedding vector
-      required: true,
+      required: false,
     },
     hasVoted: {
       type: Boolean,

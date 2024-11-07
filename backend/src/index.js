@@ -6,6 +6,7 @@ import cors from "cors";
 import connectDB from "./db/index.js";
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
+import { errorMiddleware } from "./utils/error.js";
 
 dotenv.config({ path: "./env" });
 
@@ -41,3 +42,5 @@ connectDB()
   // Routes
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
+
+app.use(errorMiddleware);
