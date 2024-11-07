@@ -45,7 +45,7 @@ const userSchema = new Schema(
       validate: [arrayLimit, "{PATH} must have between 1 and 3 images"], // Limit to 3-4 images
     },
     embeddings: {
-      type: [Number], // Array to store the user's face embedding vector
+      type: [[Number]], // Array to store the user's face embedding vector
       required: false,
     },
     hasVoted: {
@@ -84,7 +84,7 @@ function arrayLimit(val) {
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
-  this.password = bcrypt.hash(this.password, 10);
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 

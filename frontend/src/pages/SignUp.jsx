@@ -6,6 +6,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { HiOutlinePlus } from "react-icons/hi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from 'axios'
 
 function ImageUploader({ onFileSelect }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -71,7 +72,6 @@ function ImageUploader({ onFileSelect }) {
 export default function SignUp() {
   const [formData, setFormData] = useState({});
   const [selectedFiles, setSelectedFiles] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
