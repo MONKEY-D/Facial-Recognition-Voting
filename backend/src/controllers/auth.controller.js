@@ -38,13 +38,13 @@ export const signup = async (req, res, next) => {
     }
   }
 
-  const hashedPassword = bcryptjs.hashSync(password, 10);
+  // const hashedPassword = bcryptjs.hashSync(password, 10);
 
   try {
     // Upload each file to Cloudinary and get the URLs
     const imageUrls = await Promise.all(
       files.map(async (file) => {
-        const uploadResult = await uploadOnCloudinary(file.path); // Ensure uploadOnCloudinary returns a URL or response object with URL
+        const uploadResult = await uploadOnCloudinary(file.path); 
         if (!uploadResult || !uploadResult.url) {
           throw new Error("Image upload failed");
         }
@@ -73,7 +73,7 @@ export const signup = async (req, res, next) => {
       username,
       email,
       fullname,
-      password: hashedPassword,
+      password ,
       images: imageUrls,
       embeddings,
     });
@@ -92,24 +92,23 @@ export const signup = async (req, res, next) => {
 export const signin = async (req, res, next) => {
   const { username, password } = req.body;
 
-  if (
-    !username ||
-    !password ||
-    username.trim() === "" ||
-    password.trim() === ""
-  ) {
+  if (!username || !password || username === "" || password === "") {
     return next(errorHandler(400, "All Fields are required"));
   }
 
   try {
     const validUser = await User.findOne({
       $or: [{ username: username }, { email: username }],
-    }).select('+password')
+    }).select("+password");
     if (!validUser) {
       return next(errorHandler(404, "User Not Found"));
     }
+
     //compare password
-    const validPassword = bcryptjs.compareSync(password, validUser.password);
+    const validPassword = await validUser.isPasswordCorrect(password);
+
+    console.log("Password comparison result:", validPassword);
+
     if (!validPassword) {
       return next(errorHandler(400, "Invalid password"));
     }
@@ -117,11 +116,14 @@ export const signin = async (req, res, next) => {
     // generate JWT Token
     const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
 
-    const {password: pass, ...rest} = validUser._doc;
+    const { password: pass, ...rest } = validUser._doc;
 
-    res.status(200).cookie('access_token', token,{
-      httpOnly: true
-    }).json(rest);
+    res
+      .status(200)
+      .cookie("access_token", token, {
+        httpOnly: true,
+      })
+      .json(rest);
   } catch (error) {
     return next(error);
   }
