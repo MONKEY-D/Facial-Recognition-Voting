@@ -27,7 +27,7 @@ const userSchema = new Schema(
     },
     avatar: {
       type: String,
-      required: false,
+      default: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'
     },
     password: {
       type: String,
@@ -73,6 +73,11 @@ const userSchema = new Schema(
     resetPasswordOTPExpires: {
       type: Date, // OTP expiration time
       select: false,
+    },
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user'
     },
   },
   { timestamps: true }

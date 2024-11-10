@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import connectDB from "./db/index.js";
 import userRoutes from "./routes/user.route.js";
+import adminRoutes from "./routes/admin.route.js";
 import authRoutes from "./routes/auth.route.js";
 import { errorMiddleware } from "./utils/error.js";
 
@@ -42,5 +43,6 @@ connectDB()
   // Routes
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use('/admin', adminRoutes);
 
 app.use(errorMiddleware);

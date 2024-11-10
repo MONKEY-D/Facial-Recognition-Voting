@@ -183,6 +183,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { signInStart,signInSuccess,signInFailure } from "../redux/user/userSlice";
 import {useDispatch, useSelector} from 'react-redux'
+// import OAuth from "../components/OAuth";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({username: "", password: ""});
@@ -246,8 +247,13 @@ export default function SignIn() {
         dispatch(signInFailure(responseData.message));
       } else {
         toast.success("Sign-in successful!");
-        dispatch(signInSuccess(responseData));  // Pass user data from response
-        navigate("/");
+        dispatch(signInSuccess(responseData)); 
+        
+        if (responseData.role === "admin") {
+          navigate("/admin/dashboard"); // Redirect to admin dashboard if role is admin
+        } else {
+          navigate("/"); // Redirect to user dashboard if role is user
+        }
       }
     } catch (error) {
       console.error("Error uploading:", error);
@@ -305,6 +311,7 @@ export default function SignIn() {
                 "Sign In"
               )}
             </Button>
+            {/* <OAuth/> */}
           </form>
           <div className="flex gap-2 text-sm mt-5">
             <span>Don't have a account?</span>

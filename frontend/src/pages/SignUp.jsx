@@ -6,6 +6,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { HiOutlinePlus } from "react-icons/hi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+// import OAuth from "../components/OAuth";
 
 function ImageUploader({ onFileSelect }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -219,6 +220,7 @@ export default function SignUp() {
                 "Sign Up"
               )}
             </Button>
+            {/* <OAuth/> */}
           </form>
           <div className="flex gap-2 text-sm mt-5">
             <span>Have an account?</span>

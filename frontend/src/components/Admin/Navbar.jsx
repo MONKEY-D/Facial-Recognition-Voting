@@ -1,9 +1,11 @@
 import React from 'react'
 
-export default function Dashboard() {
+const Navbar = () => {
   return (
     <div>
-      Dashboard
+      
     </div>
   )
 }
+
+export default Navbar

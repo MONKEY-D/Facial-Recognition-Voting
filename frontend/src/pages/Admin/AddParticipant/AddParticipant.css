@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+
+.add {
+    width: 60%;
+    height: 50%;
+    margin-left: max(5vw, 25px);
+    margin-top: 50px;
+    color: #6d6d6d;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    
+}
+
+.add form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* General styling for column layout */
+.flexx-col {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.flexx-col p {
+    font-size: 14px;
+    color: #333;
+    margin: 0;
+    font-weight: 500;
+}
+
+.flexx-col input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    outline: none;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.flexx-col input:focus {
+    border-color: #6d6d6d;
+    box-shadow: 0 0 5px rgba(109, 109, 109, 0.3);
+}
+
+.flexx-col input::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+/* Specific styling for the image upload section */
+.add-img-upload {
+    display: flex;
+    align-items: start;
+    gap: 15px;
+}
+
+.add-img-upload img {
+    width: 120px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Specific styling for the 'Party Name' input */
+.add-party-name,
+.add-leader-name {
+    width: max(40%, 280px);
+}
+
+/* Button styling */
+.add-btn {
+    width: 120px;
+    border: none;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+    align-self: flex-start;
+    transition: all 0.2s ease;
+}
+
+.add-btn:hover {
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.add-btn:active {
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+    transform: translateY(2px);
+}
+.add-img-upload img {
+    width: 150px;
+    height: auto;
+}
