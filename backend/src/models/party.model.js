@@ -20,6 +20,6 @@ const participantSchema = new mongoose.Schema(
   }
 );
 
-const Participant = mongoose.model("Participant", participantSchema);
+const Participants = mongoose.model("Participants", participantSchema);
 
-export default Participant
+export default Participants

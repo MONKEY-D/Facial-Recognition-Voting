@@ -1,11 +1,12 @@
 import { User } from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import bcryptjs from "bcryptjs";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import axios from "axios";
 import jwt from "jsonwebtoken";
+import Participants from "../models/party.model.js";
 
+// SIGNUP - User Registration
 export const signup = async (req, res, next) => {
   const { username, email, password, fullname } = req.body;
   const files = req.files;
@@ -21,38 +22,37 @@ export const signup = async (req, res, next) => {
   ) {
     return next(errorHandler(400, "All fields are required"));
   }
+
   if (password.length < 8) {
     return next(
       errorHandler(400, "Password must be at least 8 characters long")
     );
   }
 
-  // Check if email or username is already taken
-  const existingUser = await User.findOne({ $or: [{ email }, { username }] });
-  if (existingUser) {
-    if (existingUser.email === email) {
-      return next(errorHandler(400, "Email is already registered"));
-    }
-    if (existingUser.username === username) {
-      return next(errorHandler(400, "Username is already taken"));
-    }
-  }
-
-  // const hashedPassword = bcryptjs.hashSync(password, 10);
-
   try {
-    // Upload each file to Cloudinary and get the URLs
+    // Check if email or username already exists
+    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    if (existingUser) {
+      if (existingUser.email === email) {
+        return next(errorHandler(400, "Email is already registered"));
+      }
+      if (existingUser.username === username) {
+        return next(errorHandler(400, "Username is already taken"));
+      }
+    }
+
+    // Upload images to Cloudinary
     const imageUrls = await Promise.all(
       files.map(async (file) => {
-        const uploadResult = await uploadOnCloudinary(file.path); 
-        if (!uploadResult || !uploadResult.url) {
+        const uploadResult = await uploadOnCloudinary(file.path);
+        if (!uploadResult) {
           throw new Error("Image upload failed");
         }
-        return uploadResult.url;
+        return uploadResult;
       })
     );
 
-    // Send image URLs to Python backend for embeddings
+    // Fetch embeddings from Python backend
     const embeddings = [];
     for (const imageUrl of imageUrls) {
       try {
@@ -68,18 +68,17 @@ export const signup = async (req, res, next) => {
       }
     }
 
-    // Create a new user with the URLs from Cloudinary
+    // Create new user and save to database
     const newUser = new User({
       username,
       email,
       fullname,
-      password ,
+      password, // Will be hashed by the pre-save hook in user model
       images: imageUrls,
       embeddings,
       role: "user",
     });
 
-    // Save the new user to the database
     await newUser.save();
     res.json(new ApiResponse(200, "Signup successful"));
   } catch (error) {
@@ -90,47 +89,105 @@ export const signup = async (req, res, next) => {
   }
 };
 
+// SIGNIN - User Login
 export const signin = async (req, res, next) => {
   const { username, password } = req.body;
 
+  // Validate fields
   if (!username || !password || username === "" || password === "") {
     return next(errorHandler(400, "All Fields are required"));
   }
 
   try {
+    // Find user by username or email
     const validUser = await User.findOne({
-      $or: [{ username: username }, { email: username }],
+      $or: [{ username }, { email: username }],
     }).select("+password");
     if (!validUser) {
       return next(errorHandler(404, "User Not Found"));
     }
 
-    //compare password
+    // Compare passwords
     const validPassword = await validUser.isPasswordCorrect(password);
-
-    console.log("Password comparison result:", validPassword);
-
     if (!validPassword) {
       return next(errorHandler(400, "Invalid password"));
     }
 
-    // generate JWT Token
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+    // Generate JWT Token
+    const token = jwt.sign(
+      { id: validUser._id },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
+    );
 
+    // Exclude password from response
     const { password: pass, ...rest } = validUser._doc;
 
-    res
-      .status(200)
-      .cookie("access_token", token, {
-        httpOnly: true,
-      })
-      .json(rest);
+    res.status(200).json({
+      message: "Sign-in successful!",
+      user: rest,
+      token,
+      role: validUser.role,
+    });
   } catch (error) {
     return next(error);
   }
 };
 
+// VOTE - Register user's vote
+export const vote = async (req, res, next) => {
+  const userId = req.user.id; // Get user ID from token or session
+  const { participantId } = req.body;
 
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(errorHandler(404, "User not found"));
+    }
+
+    if (user.hasVoted) {
+      return next(errorHandler(400, "User has already voted"));
+    }
+
+    // Check if the participant exists
+    const participant = await Participants.findById(participantId);
+    if (!participant) {
+      return next(errorHandler(404, "Participant not found"));
+    }
+
+    // Update user’s voting status and the participant they voted for
+    console.log("Vote request received from user:", req.user.id);
+    console.log("Voting for participant:", participantId);
+
+    user.hasVoted = true;
+    user.votedFor = participantId;
+
+    await user.save();
+
+    res.json(new ApiResponse(200, "Vote registered successfully"));
+  } catch (error) {
+    console.error("Error updating voting status:", error);
+    return next(errorHandler(500, "Server error while registering vote"));
+  }
+};
+
+// GET USER STATUS - Check if user has voted
+export const getUserStatus = async (req, res, next) => {
+  const userId = req.user.id;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(errorHandler(404, "User not found"));
+    }
+
+    res.json(
+      new ApiResponse(200, "User status retrieved", { hasVoted: user.hasVoted })
+    );
+  } catch (error) {
+    return next(errorHandler(500, "Server error while retrieving user status"));
+  }
+};
 
 // export const google = async (req, res, next) => {
 //   const { name, email, googlePhotoUrl } = req.body;
@@ -172,7 +229,3 @@ export const signin = async (req, res, next) => {
 //     return next(error);
 //   }
 // };
-
-
-
-

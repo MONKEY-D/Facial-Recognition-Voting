@@ -1,0 +1,73 @@
+.box {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-bottom: 100px;
+    justify-content: center;
+    align-items: center; 
+    height: 100vh; 
+  }
+  
+  .participant-container {
+    display: flex;
+    align-items: center;  /* Align elements vertically */
+    gap: 20px;  /* Space between elements */
+    padding: 20px;
+    background-color: white;  /* White background for the container */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);  /* Shadow around the container */
+    border-radius: 10px;  /* Rounded corners */
+  }
+
+  .image-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    padding: 5px;
+  }
+  
+  .image-section img {
+    width: 80px;  /* Adjust the size of the image */
+    height: 80px;  /* Adjust the size of the image */
+    display: flex;
+    border-radius: 50%;  /* Circular image */
+  }
+  
+  .info-section {
+    display: flex;
+    align-items: center;  /* Align name and button in the center */
+    gap: 15px;  /* Space between name and button */
+  }
+
+  .name-block{
+    text-align: center;
+    font-family: poppins;
+  }
+  
+  .name-block p {
+    margin: 0;
+    font-size: 18px;  /* Adjust font size for the name */
+  }
+  
+  .vote-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+  }
+  
+  .vote-btn.voted {
+    background-color: #28a745;  /* Green color when voted */
+  }
+  
+  .vote-btn:disabled {
+    background-color: #6c757d;  /* Gray color when disabled */
+    cursor: not-allowed;
+  }
+  
