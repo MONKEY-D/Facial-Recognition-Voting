@@ -135,9 +135,10 @@ export const signin = async (req, res, next) => {
 };
 
 // VOTE - Register user's vote
+// VOTE - Register user's vote with face embedding verification
 export const vote = async (req, res, next) => {
   const userId = req.user.id; // Get user ID from token or session
-  const { participantId } = req.body;
+  const { participantId, faceEmbedding } = req.body;
 
   try {
     const user = await User.findById(userId);
@@ -149,7 +150,29 @@ export const vote = async (req, res, next) => {
       return next(errorHandler(400, "User has already voted"));
     }
 
-    // Check if the participant exists
+    // Ensure the user has stored embeddings for comparison
+    if (!user.embeddings || user.embeddings.length === 0) {
+      return next(errorHandler(400, "No stored embeddings found for user"));
+    }
+
+    // Compare the received embedding with the stored embeddings
+    const threshold = 0.8; // Set a similarity threshold (0.8 is a common choice, can be adjusted)
+    let matchFound = false;
+
+    for (const storedEmbedding of user.embeddings) {
+      const similarity = cosineSimilarity(faceEmbedding, storedEmbedding);
+
+      if (similarity >= threshold) {
+        matchFound = true;
+        break;
+      }
+    }
+
+    if (!matchFound) {
+      return next(errorHandler(401, "Face verification failed."));
+    }
+
+    // If face verification is successful, proceed with voting
     const participant = await Participants.findById(participantId);
     if (!participant) {
       return next(errorHandler(404, "Participant not found"));
@@ -163,10 +186,44 @@ export const vote = async (req, res, next) => {
 
     res.json(new ApiResponse(200, "Vote registered successfully"));
   } catch (error) {
-    console.error("Error updating voting status:", error);
+    console.error("Error during face verification or vote registration:", error);
     return next(errorHandler(500, "Server error while registering vote"));
   }
 };
+
+
+// export const vote = async (req, res, next) => {
+//   const userId = req.user.id; // Get user ID from token or session
+//   const { participantId } = req.body;
+
+//   try {
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return next(errorHandler(404, "User not found"));
+//     }
+
+//     if (user.hasVoted) {
+//       return next(errorHandler(400, "User has already voted"));
+//     }
+
+//     // Check if the participant exists
+//     const participant = await Participants.findById(participantId);
+//     if (!participant) {
+//       return next(errorHandler(404, "Participant not found"));
+//     }
+
+//     // Update user’s voting status and the participant they voted for
+//     user.hasVoted = true;
+//     user.votedFor = participantId;
+
+//     await user.save();
+
+//     res.json(new ApiResponse(200, "Vote registered successfully"));
+//   } catch (error) {
+//     console.error("Error updating voting status:", error);
+//     return next(errorHandler(500, "Server error while registering vote"));
+//   }
+// };
 
 // GET USER STATUS - Check if user has voted
 export const getUserStatus = async (req, res, next) => {
@@ -184,6 +241,17 @@ export const getUserStatus = async (req, res, next) => {
   } catch (error) {
     return next(errorHandler(500, "Server error while retrieving user status"));
   }
+};
+
+// Utility function to calculate cosine similarity between two vectors
+const cosineSimilarity = (vecA, vecB) => {
+  const dotProduct = vecA.reduce((acc, val, index) => acc + val * vecB[index], 0);
+  const magnitudeA = Math.sqrt(vecA.reduce((acc, val) => acc + val * val, 0));
+  const magnitudeB = Math.sqrt(vecB.reduce((acc, val) => acc + val * val, 0));
+
+  if (magnitudeA === 0 || magnitudeB === 0) return 0;
+
+  return dotProduct / (magnitudeA * magnitudeB);
 };
 
 // export const google = async (req, res, next) => {
