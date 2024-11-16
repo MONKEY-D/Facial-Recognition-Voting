@@ -1,10 +1,10 @@
 import { User } from "../models/user.model.js";
+import { Participants } from "../models/party.model.js";
 import { errorHandler } from "../utils/error.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import axios from "axios";
 import jwt from "jsonwebtoken";
-import Participants from "../models/party.model.js";
 
 // SIGNUP - User Registration
 export const signup = async (req, res, next) => {
@@ -156,9 +156,6 @@ export const vote = async (req, res, next) => {
     }
 
     // Update user’s voting status and the participant they voted for
-    console.log("Vote request received from user:", req.user.id);
-    console.log("Voting for participant:", participantId);
-
     user.hasVoted = true;
     user.votedFor = participantId;
 

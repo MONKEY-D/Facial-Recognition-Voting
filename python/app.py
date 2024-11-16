@@ -8,7 +8,7 @@ import logging
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["http://localhost:5173"])
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -50,3 +50,10 @@ def get_embedding():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+
+
+
+
+
+
+

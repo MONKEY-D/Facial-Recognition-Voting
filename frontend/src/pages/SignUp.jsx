@@ -7,7 +7,7 @@ import { HiOutlinePlus } from "react-icons/hi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-function ImageUploader({ onFileSelect }) {
+function ImageUploader({ onFileSelect, disabled }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
 
@@ -19,7 +19,7 @@ function ImageUploader({ onFileSelect }) {
       }
 
       setSelectedFiles(acceptedFiles);
-      onFileSelect(acceptedFiles); // Pass files to parent component
+      onFileSelect(acceptedFiles);
 
       const previewUrls = acceptedFiles.map((file) =>
         URL.createObjectURL(file)
@@ -33,12 +33,15 @@ function ImageUploader({ onFileSelect }) {
     onDrop,
     accept: { "image/*": [] },
     multiple: true,
+    disabled,
   });
 
   return (
     <div
       {...getRootProps()}
-      className="border-dashed border-4 border-gray-300 p-8 flex flex-col items-center text-gray-500 cursor-pointer"
+      className={`border-dashed border-4 border-gray-300 p-8 flex flex-col items-center text-gray-500 cursor-pointer ${
+        disabled ? "opacity-50" : ""
+      }`}
       style={{ borderRadius: "8px" }}
     >
       <input {...getInputProps()} />
@@ -71,6 +74,7 @@ export default function SignUp() {
   const [formData, setFormData] = useState({});
   const [selectedFiles, setSelectedFiles] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -80,6 +84,28 @@ export default function SignUp() {
   const handleFileSelect = (file) => {
     setSelectedFiles(file);
   };
+
+  // const getEmbedding = async (imageUrl) => {
+  //   try {
+  //     const response = await fetch("http://127.0.0.1:5000/api/get_embedding", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ imageUrl }),
+  //     });
+  //     const data = await response.json();
+
+  //     if (response.ok) {
+  //       console.log("Embedding:", data.embedding); // Handle embedding here
+  //     } else {
+  //       toast.error(`Error: ${data.error}`);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching embedding:", error);
+  //     toast.error("Failed to get embedding.");
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -136,6 +162,8 @@ export default function SignUp() {
         }
       } else {
         toast.success("Sign-up successful!");
+        // const imageUrl = responseData.imageUrl; 
+        // await getEmbedding(imageUrl);
       }
       setLoading(false);
       if (res.ok) {
@@ -200,17 +228,30 @@ export default function SignUp() {
                 onChange={handleChange}
               />
             </div>
-            <ImageUploader onFileSelect={handleFileSelect} />
             <Button
-              gradientDuoTone="greenToBlue"
+              className="bg-gradient-to-r from-green-400 to-blue-500"
+            >
+              Take Video Data
+            </Button>
+
+            <span
+              className="displ
+            flex justify-center"
+            >
+              OR
+            </span>
+            <ImageUploader
+              onFileSelect={handleFileSelect}
+              disabled={disabled}
+            />
+            <Button
               type="submit"
               disabled={loading}
+              className="mt-5"
+              gradientDuoTone="purpleToBlue"
             >
               {loading ? (
-                <>
-                  <Spinner size="sm" />
-                  <span className="pl-3">Loading...</span>
-                </>
+                <Spinner aria-label="Spinner button example" size="sm" />
               ) : (
                 "Sign Up"
               )}
@@ -228,3 +269,21 @@ export default function SignUp() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

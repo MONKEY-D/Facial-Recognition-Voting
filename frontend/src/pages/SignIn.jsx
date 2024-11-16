@@ -50,11 +50,24 @@ export default function SignIn() {
         toast.error(responseData.message);
       } else {
         toast.success("Sign-in successful!");
+        // window.location.reload();
 
         // Save the token in localStorage
-        if (responseData.token) {
-          localStorage.setItem("token", responseData.token);
-          console.log("Token stored:", responseData.token);
+        // if (responseData.token) {
+        //   localStorage.setItem("token", responseData.token);
+        //   console.log("Token stored:", responseData.token);
+        // }
+        if (responseData.token && responseData.user) {
+          localStorage.setItem(
+            "user",
+            JSON.stringify({
+              token: responseData.token,
+              user: responseData.user,
+            })
+          );
+          // Save authentication status
+          localStorage.setItem("isLoggedIn", true);
+          console.log("Token and user data stored:", responseData.token);
         }
 
         // Redirect based on user role

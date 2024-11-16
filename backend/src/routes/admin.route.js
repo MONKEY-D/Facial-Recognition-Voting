@@ -1,7 +1,7 @@
 import express from "express";
 import { upload } from "../middleware/multer.middleware.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
-import Participants from "../models/party.model.js";
+import {Participants} from "../models/party.model.js";
 
 const router = express.Router();
 

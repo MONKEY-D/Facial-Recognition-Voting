@@ -1,73 +1,119 @@
 .box {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    margin-bottom: 100px;
-    justify-content: center;
-    align-items: center; 
-    height: 100vh; 
-  }
-  
-  .participant-container {
-    display: flex;
-    align-items: center;  /* Align elements vertically */
-    gap: 20px;  /* Space between elements */
-    padding: 20px;
-    background-color: white;  /* White background for the container */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);  /* Shadow around the container */
-    border-radius: 10px;  /* Rounded corners */
-  }
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* gap: 20px; */
+  margin: 20px 40px 20px 40px;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 300px 100px; 
+  gap: 2rem;
+}
 
-  .image-section {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
-    border-radius: 50%;
-    padding: 5px;
+@media (max-width: 1024px) {
+  .box {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns per row */
   }
-  
-  .image-section img {
-    width: 80px;  /* Adjust the size of the image */
-    height: 80px;  /* Adjust the size of the image */
-    display: flex;
-    border-radius: 50%;  /* Circular image */
-  }
-  
-  .info-section {
-    display: flex;
-    align-items: center;  /* Align name and button in the center */
-    gap: 15px;  /* Space between name and button */
-  }
+}
 
-  .name-block{
-    text-align: center;
-    font-family: poppins;
+/* Very small screens: max-width of 480px (1 column per row) */
+@media (max-width: 480px) {
+  .box {
+    grid-template-columns: 1fr; /* 1 column per row */
   }
-  
-  .name-block p {
-    margin: 0;
-    font-size: 18px;  /* Adjust font size for the name */
-  }
-  
-  .vote-btn {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
-  }
-  
-  .vote-btn.voted {
-    background-color: #28a745;  /* Green color when voted */
-  }
-  
-  .vote-btn:disabled {
-    background-color: #6c757d;  /* Gray color when disabled */
-    cursor: not-allowed;
-  }
-  
+}
+
+.participant-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Align elements vertically */
+  gap: 20px;
+  padding: 20px;
+  background-color: white; /* White background for the container */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Shadow around the container */
+  border-radius: 10px; /* Rounded corners */
+}
+
+.image-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  padding: 5px;
+  margin-bottom: 1rem;
+}
+
+.image-section img {
+  width: 80px; /* Adjust the size of the image */
+  height: 80px; /* Adjust the size of the image */
+  display: flex;
+  border-radius: 50%; /* Circular image */
+}
+
+.info-section {
+  display: flex;
+  align-items: center; /* Align name and button in the center */
+  gap: 15px; /* Space between name and button */
+}
+
+.name-block {
+  text-align: center;
+  font-family: poppins;
+}
+
+.name-block p {
+  margin: 0;
+  font-size: 18px; /* Adjust font size for the name */
+}
+
+.vote-btn {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+
+.vote-btn:hover {
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.vote-btn:active {
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+  transform: translateY(2px);
+}
+
+.vote-btn.voted {
+  background-color: #28a745; /* Green color when voted */
+}
+
+.vote-btn:disabled {
+  background-color: #6c757d; /* Gray color when disabled */
+  cursor: not-allowed;
+}
+
+.camera-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.camera-modal video {
+  border: 2px solid white;
+}
