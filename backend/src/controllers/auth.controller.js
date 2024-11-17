@@ -137,10 +137,14 @@ export const signin = async (req, res, next) => {
 // VOTE - Register user's vote
 // VOTE - Register user's vote with face embedding verification
 export const vote = async (req, res, next) => {
+  console.log("Received vote request:", req.body); 
+  
   const userId = req.user.id; // Get user ID from token or session
   const { participantId, faceEmbedding } = req.body;
 
   try {
+    console.log("Received vote request:", { userId, participantId, faceEmbedding });
+
     const user = await User.findById(userId);
     if (!user) {
       return next(errorHandler(404, "User not found"));

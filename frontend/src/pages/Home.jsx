@@ -217,24 +217,25 @@ const Home = () => {
     setIsProcessing(true); // Flag to start face verification
 
     // Ensure the webcam is available and loaded
-    if (!webcamRef.current || !webcamReady) {
-      toast.error("Webcam is not available.");
-      setLoading(false);
-      setIsProcessing(false);
-      return;
-    }
-
-    // Automatically capture image from the webcam
-    const imageSrc = webcamRef.current.getScreenshot();
+    setTimeout(async() => {
+      if (webcamRef.current) {
+        const imageSrc = webcamRef.current.getScreenshot();
 
     if (!imageSrc) {
       toast.error("Failed to capture image from webcam.");
       setLoading(false);
       setIsProcessing(false);
+      setCameraOpen(false)
       return;
     }
 
     const base64Image = imageSrc.split(",")[1];
+      if (!base64Image) {
+        toast.error("Failed to extract image from webcam.");
+        setLoading(false);
+        setIsProcessing(false);
+        return;
+      }
 
     try {
       // Send captured image to backend for face embedding verification
@@ -278,6 +279,8 @@ const Home = () => {
       setLoading(false);
       setIsProcessing(false);
     }
+  }
+  },500)
   };
 
   const handleWebcamLoaded = () => {
