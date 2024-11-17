@@ -17,8 +17,9 @@ export const signup = async (req, res, next) => {
     !email ||
     !password ||
     !fullname ||
-    !files ||
-    files.length === 0
+    // !files ||
+    // files.length === 0
+    (!files && !hasWebcamImage)
   ) {
     return next(errorHandler(400, "All fields are required"));
   }
@@ -138,7 +139,7 @@ export const signin = async (req, res, next) => {
 // VOTE - Register user's vote with face embedding verification
 export const vote = async (req, res, next) => {
   console.log("Received vote request:", req.body); 
-  
+
   const userId = req.user.id; // Get user ID from token or session
   const { participantId, faceEmbedding } = req.body;
 

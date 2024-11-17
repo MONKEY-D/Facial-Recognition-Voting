@@ -41,9 +41,9 @@ const userSchema = new Schema(
       select: false,
     },
     images: {
-      type: [String], // Array of URLs pointing to images in Cloudinary or Firebase
-      required: true,
-      validate: [arrayLimit, "{PATH} must have between 1 and 3 images"], // Limit to 3-4 images
+      type: [String],
+      required: false,
+      // validate: [arrayLimit, "{PATH} must have more then 0 images"],
     },
     embeddings: {
       type: [[Number]], // Array to store the user's face embedding vector
@@ -87,9 +87,9 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
-function arrayLimit(val) {
-  return val.length > 0 && val.length <= 3;
-}
+// function arrayLimit(val) {
+//   return val.length > 0;
+// }
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
