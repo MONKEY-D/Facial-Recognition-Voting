@@ -15,7 +15,7 @@ const app = express();
 
 // Middleware and CORS setup
 const corsOptions = {
-  origin: "https://facial-recognition-voting.vercel.app",
+  origin: "http://localhost:5173",
   credentials: true, 
 };
 app.use(cors(corsOptions));
